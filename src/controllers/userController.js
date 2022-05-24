@@ -12,7 +12,6 @@ const {
   isValidEmail,
 } = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
-const { json } = require("body-parser");
 
 const createUser = async function (req, res) {
   try {
@@ -330,7 +329,7 @@ const getUser = async function (req, res) {
         .send({ status: false, message: "userId is incorrect" });
     }
 
-    const user = await userModel.findOne({ _id: userId, isDeleted: false });
+    const user = await userModel.findOne({ _id: userId });
     if (!user) {
       return res.status(404).send({
         status: false,
