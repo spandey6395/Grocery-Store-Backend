@@ -6,17 +6,21 @@ const {
   isValidObjectId,
   isValidRequestBody,
   isValidFiles,
+  isValidPassword,
+  isValidPhone,
+  isValidPincode,
+  isValidEmail,
 } = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
+const { json } = require("body-parser");
 
 const createUser = async function (req, res) {
   try {
     //reading input
     let body = req.body;
-    let arr = Object.keys(body); //array of object keys
 
     //empty request body
-    if (arr.length == 0) {
+    if (!isValidRequestBody(body)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide input" });
@@ -46,14 +50,6 @@ const createUser = async function (req, res) {
           .send({ status: false, message: "Please provide email" });
       }
     }
-
-    // if (!body.profileImage) {
-    //   {
-    //     return res
-    //       .status(400)
-    //       .send({ status: false, message: "Please provide profileImage" });
-    //   }
-    // }
 
     if (!body.phone) {
       {
@@ -106,7 +102,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      let shippingPincode = /^[0-9]{6,6}$/.test(address.shipping.pincode);
+      let shippingPincode = isValidPincode.test(address.shipping.pincode);
 
       if (!shippingPincode) {
         return res
@@ -138,7 +134,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      let billingPincode = /^[0-9]{6,6}$/.test(address.billing.pincode);
+      let billingPincode = isValidPincode.test(address.billing.pincode);
 
       if (!billingPincode) {
         return res
@@ -150,13 +146,10 @@ const createUser = async function (req, res) {
     //format validation using regex
     let fname = /^[a-zA-Z]{2,30}$/.test(body.name);
     let lname = /^[a-zA-Z]{2,30}$/.test(body.name);
-    let emailId = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(body.email);
-    let password =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/.test(
-        body.password
-      );
+    let emailId = isValidEmail.test(body.email);
+    let password = isValidPassword.test(body.password);
     //valid indian phone number
-    let phone = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/.test(body.phone);
+    let phone = isValidPhone.test(body.phone);
 
     if (!fname) {
       return res
@@ -263,7 +256,7 @@ const login = async function (req, res) {
     }
     // regex validation for email
 
-    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+    if (!isValidEmail.test(email)) {
       return res.status(400).send({
         status: false,
         message: `${email} should be a valid email address`,
@@ -278,7 +271,7 @@ const login = async function (req, res) {
 
     // regex validation for passwrd
 
-    if (!/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password)) {
+    if (!isValidPassword.test(password)) {
       return res.status(400).send({
         status: false,
         message: `Password length should be A Valid Password And Length Should Be in between 8 to 15 `,
@@ -308,6 +301,7 @@ const login = async function (req, res) {
       },
       "Group-48"
     );
+    res.setHeader("Authorization", token);
     return res.status(200).send({
       status: true,
       message: "User login successfull",
@@ -352,18 +346,16 @@ const getUser = async function (req, res) {
   }
 };
 
+//---------------------update user---------------------------
+
 const updateUser = async function (req, res) {
   try {
-    let userId = req.params.userId;
-
     let data = req.body;
 
-    //...authorization....//
-
-    if (!(userId === req.userId)) {
+    if (!isValidRequestBody(data)) {
       return res
-        .status(402)
-        .send({ status: false, message: " Unauthorized access" });
+        .status(400)
+        .send({ status: false, message: "Please provide input" });
     }
 
     const files = req.files;
@@ -374,28 +366,101 @@ const updateUser = async function (req, res) {
       data.profileImage = profilePicture;
     }
 
-    const isEmailAlreadyExist = await userModel.findOne({ email: data.email });
+    const { fname, lname, email, phone, password } = data;
+    if (email) {
+      const isEmailAlreadyExist = await userModel.findOne({ email: email });
 
-    if (isEmailAlreadyExist) {
-      return res
-        .status(400)
-        .send({ status: false, message: `${email} is already exist` });
+      if (isEmailAlreadyExist) {
+        return res
+          .status(400)
+          .send({ status: false, message: `${email} is already exist` });
+      }
     }
 
-    const isPhoneAlreadyExist = await userModel.findOne({ phone: data.phone });
+    if (phone) {
+      const isPhoneAlreadyExist = await userModel.findOne({ phone: phone });
 
-    if (isPhoneAlreadyExist) {
-      return res
-        .status(400)
-        .send({ status: false, message: `${phone} is already exist` });
+      if (isPhoneAlreadyExist) {
+        return res
+          .status(400)
+          .send({ status: false, message: `${phone} is already exist` });
+      }
     }
+
+    if (password) {
+      if (!isValidPassword.test(password)) {
+        return res.status(400).send({
+          status: false,
+          message:
+            "Password length should be of minimum 8 and maximum 15 characters",
+        });
+      }
+    }
+
+    // let address = JSON.parse(JSON.stringify(data));
+    if (data.address) {
+      const address = JSON.parse(data.address);
+      data.address = address;
+      const shipping = address.shipping;
+      if (shipping) {
+        if (shipping.pincode) {
+          if (!isValidPincode.test(shipping.pincode)) {
+            return res
+              .status(400)
+              .send({ status: false, message: "enter valid pincode" });
+          }
+        }
+      }
+
+      const billing = address.billing;
+      if (billing) {
+        if (billing.pincode) {
+          if (!isValidPincode.test(billing.pincode)) {
+            return res
+              .status(400)
+              .send({ status: false, message: "enter valid pincode" });
+          }
+        }
+      }
+    }
+
+    const newData = { fname, lname, email, phone, password };
 
     const updatedUser = await userModel.findOneAndUpdate(
-      { _id: userId },
-      data,
+      { _id: req.userId },
+      newData,
       { new: true }
     );
 
+    if (data.address) {
+      const shipping = data.address.shipping;
+      if (shipping) {
+        if (shipping.street) {
+          updatedUser.address.shipping.street = shipping.street;
+        }
+        if (shipping.city) {
+          updatedUser.address.shipping.city = shipping.city;
+        }
+        if (shipping.pincode) {
+          updatedUser.address.shipping.pincode = shipping.pincode;
+        }
+      }
+
+      const billing = data.address.billing;
+      if (billing) {
+        if (billing.street) {
+          updatedUser.address.billing.street = billing.street;
+        }
+        if (billing.city) {
+          updatedUser.address.billing.city = billing.city;
+        }
+        if (billing.pincode) {
+          updatedUser.address.billing.pincode = billing.pincode;
+        }
+      }
+    }
+
+    updatedUser.save();
     return res.status(200).send({
       status: true,
       message: "User profile updated",
