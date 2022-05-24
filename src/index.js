@@ -16,7 +16,7 @@ app.use(multer().any());
 //a framework that helps to establish a connection b/w node and mongoDB
 mongoose
   .connect(
-    "mongodb+srv://DeepakGunpal:hdg5NWwcvf2wUDTN@deepakcluster0.hynna.mongodb.net/ShoppingCart",
+    "mongodb+srv://DeepakGunpal:hdg5NWwcvf2wUDTN@deepakcluster0.hynna.mongodb.net/group48Database",
     {
       useNewUrlParser: true,
     }
