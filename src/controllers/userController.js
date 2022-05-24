@@ -1,6 +1,11 @@
 const userModel = require("../models/userModel");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const validator = require("../middleware/validator");
+const {
+  isValid,
+  isValidObjectId,
+  isValidRequestBody,
+} = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
 
 const createUser = async function (req, res) {
@@ -150,7 +155,7 @@ const createUser = async function (req, res) {
         body.password
       );
     //valid indian phone number
-    let phone = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/.test(body.phone);
+    let phone = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/.test(body.phone);
 
     if (!fname) {
       return res
@@ -240,6 +245,79 @@ const createUser = async function (req, res) {
   }
 };
 
+const login = async function (req, res) {
+  try {
+    let body = req.body;
+    const { email, password } = body;
+    if (!isValidRequestBody(body)) {
+      return res
+        .status(400)
+        .send({ status: false, msg: "pls provide details to login" });
+    }
+
+    if (!isValid(email)) {
+      return res
+        .status(400)
+        .send({ status: false, msg: "pls provide valid email" });
+    }
+    // regex validation for email
+
+    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+      return res.status(400).send({
+        status: false,
+        message: `${email} should be a valid email address`,
+      });
+    }
+
+    if (!isValid(password)) {
+      return res
+        .status(400)
+        .send({ status: false, msg: "pls provide valid password" });
+    }
+
+    // regex validation for passwrd
+
+    if (!/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password)) {
+      return res.status(400).send({
+        status: false,
+        message: `Password length should be A Valid Password And Length Should Be in between 8 to 15 `,
+      });
+    }
+
+    let user = await userModel.findOne({ email: email });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ status: false, msg: "Invalid credentials" });
+    }
+    const passwordDetails = await bcrypt.compare(body.password, user.password);
+    if (!passwordDetails) {
+      return res.status(400).send({
+        status: false,
+        msg: "password is incorrect pls provide correct passwords",
+      });
+    }
+    // after sucessfully enter email and password ,create a token
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 60 * 180,
+      },
+      "Group-48"
+    );
+    return res.status(200).send({
+      status: true,
+      message: "User login successfull",
+      data: { userId: user._id, token: token },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ status: false, msg: error.message });
+  }
+};
+
 const getUser = async function (req, res) {
   try {
     const params = req.params;
@@ -251,7 +329,7 @@ const getUser = async function (req, res) {
         .send({ status: false, message: "please enter UserId in params" });
     }
 
-    if (!validator.isValidObjectId(userId)) {
+    if (!isValidObjectId(userId)) {
       return res
         .status(400)
         .send({ status: false, message: "userId is incorrect" });
@@ -259,7 +337,7 @@ const getUser = async function (req, res) {
 
     const user = await userModel.findOne({ _id: userId, isDeleted: false });
     if (!user) {
-      res.status(404).send({
+      return res.status(404).send({
         status: false,
         message: `User did not found with this ${userId} id`,
       });
@@ -273,4 +351,4 @@ const getUser = async function (req, res) {
   }
 };
 
-module.exports = { createUser, getUser };
+module.exports = { createUser, getUser, login };
