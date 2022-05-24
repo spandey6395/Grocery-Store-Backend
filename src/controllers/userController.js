@@ -1,6 +1,6 @@
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const validator = require("../ middleware/validator");
+const validator = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
 
 const createUser = async function (req, res) {
@@ -259,12 +259,10 @@ const getUser = async function (req, res) {
 
     const user = await userModel.findOne({ _id: userId, isDeleted: false });
     if (!user) {
-      res
-        .status(404)
-        .send({
-          status: false,
-          message: `User did not found with this ${userId} id`,
-        });
+      res.status(404).send({
+        status: false,
+        message: `User did not found with this ${userId} id`,
+      });
     }
     res
       .status(200)
