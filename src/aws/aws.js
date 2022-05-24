@@ -16,7 +16,7 @@ let uploadFile = (file) => {
     var uploadParams = {
       ACL: "public-read",
       Bucket: "classroom-training-bucket", //HERE
-      Key: "bookCover/" + file.originalname, //HERE
+      Key: "profileImage/" + file.originalname, //HERE
       Body: file.buffer,
     };
 
@@ -24,7 +24,6 @@ let uploadFile = (file) => {
       if (err) {
         return reject({ error: err.message });
       }
-      console.log(data);
       console.log("file uploaded succesfully");
       return resolve(data.Location); //link generated
     });
