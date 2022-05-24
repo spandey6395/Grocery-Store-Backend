@@ -14,4 +14,8 @@ const isValidObjectId = function (objectId) {
   return mongoose.Types.ObjectId.isValid(objectId);
 };
 
-module.exports = { isValid, isValidObjectId, isValidRequestBody };
+const isValidFiles = function (files) {
+  if (files && files.length > 0) return true;
+};
+
+module.exports = { isValid, isValidObjectId, isValidRequestBody, isValidFiles };

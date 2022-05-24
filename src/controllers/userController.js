@@ -5,6 +5,7 @@ const {
   isValid,
   isValidObjectId,
   isValidRequestBody,
+  isValidFiles,
 } = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
 
@@ -252,13 +253,13 @@ const login = async function (req, res) {
     if (!isValidRequestBody(body)) {
       return res
         .status(400)
-        .send({ status: false, msg: "pls provide details to login" });
+        .send({ status: false, message: "pls provide details to login" });
     }
 
     if (!isValid(email)) {
       return res
         .status(400)
-        .send({ status: false, msg: "pls provide valid email" });
+        .send({ status: false, message: "pls provide valid email" });
     }
     // regex validation for email
 
@@ -272,7 +273,7 @@ const login = async function (req, res) {
     if (!isValid(password)) {
       return res
         .status(400)
-        .send({ status: false, msg: "pls provide valid password" });
+        .send({ status: false, message: "pls provide valid password" });
     }
 
     // regex validation for passwrd
@@ -294,7 +295,7 @@ const login = async function (req, res) {
     if (!passwordDetails) {
       return res.status(400).send({
         status: false,
-        msg: "password is incorrect pls provide correct passwords",
+        message: "password is incorrect pls provide correct passwords",
       });
     }
     // after sucessfully enter email and password ,create a token
@@ -351,4 +352,58 @@ const getUser = async function (req, res) {
   }
 };
 
-module.exports = { createUser, getUser, login };
+const updateUser = async function (req, res) {
+  try {
+    let userId = req.params.userId;
+
+    let data = req.body;
+
+    //...authorization....//
+
+    if (!(userId === req.userId)) {
+      return res
+        .status(402)
+        .send({ status: false, message: " Unauthorized access" });
+    }
+
+    const files = req.files;
+
+    if (isValidFiles(files)) {
+      const profilePicture = await uploadFile(files[0]);
+
+      data.profileImage = profilePicture;
+    }
+
+    const isEmailAlreadyExist = await userModel.findOne({ email: data.email });
+
+    if (isEmailAlreadyExist) {
+      return res
+        .status(400)
+        .send({ status: false, message: `${email} is already exist` });
+    }
+
+    const isPhoneAlreadyExist = await userModel.findOne({ phone: data.phone });
+
+    if (isPhoneAlreadyExist) {
+      return res
+        .status(400)
+        .send({ status: false, message: `${phone} is already exist` });
+    }
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId },
+      data,
+      { new: true }
+    );
+
+    return res.status(200).send({
+      status: true,
+      message: "User profile updated",
+      data: updatedUser,
+    });
+  } catch (err) {
+    return res.status(500).send({ status: false, message: err.message });
+  }
+};
+
+module.exports = { createUser, getUser, login, updateUser };
