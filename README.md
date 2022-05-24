@@ -100,9 +100,9 @@ Response format
 On success - Return HTTP status 200 and returns the user document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
 {
-    "status": true,
-    "message": "User profile details",
-    "data": {
+      "status": true,
+      "message": "User profile details",
+      "data": {
         "address": {
             "shipping": {
                 "street": "MG Road",
