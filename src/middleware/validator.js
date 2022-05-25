@@ -18,22 +18,25 @@ const isValidFiles = function (files) {
   if (files && files.length > 0) return true;
 };
 
-const isValidPassword =
+const alphabetOnlyRegex = /^[a-zA-Z]{2,30}$/;
+
+const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
 
-const isValidPhone = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
+const phoneRegex = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
-const isValidPincode = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/;
+const pincodeRegex = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/;
 
-const isValidEmail = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$/
+const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
 
 module.exports = {
   isValid,
   isValidObjectId,
   isValidRequestBody,
   isValidFiles,
-  isValidPassword,
-  isValidPhone,
-  isValidPincode,
-  isValidEmail
+  alphabetOnlyRegex,
+  passwordRegex,
+  phoneRegex,
+  pincodeRegex,
+  emailRegex,
 };

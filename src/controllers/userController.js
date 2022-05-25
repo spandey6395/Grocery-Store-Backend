@@ -6,10 +6,11 @@ const {
   isValidObjectId,
   isValidRequestBody,
   isValidFiles,
-  isValidPassword,
-  isValidPhone,
-  isValidPincode,
-  isValidEmail,
+  alphabetOnlyRegex,
+  passwordRegex,
+  phoneRegex,
+  pincodeRegex,
+  emailRegex,
 } = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
 
@@ -17,6 +18,7 @@ const createUser = async function (req, res) {
   try {
     //reading input
     let body = req.body;
+    const { fname, lname, phone, email, password, address } = body;
 
     //empty request body
     if (!isValidRequestBody(body)) {
@@ -26,7 +28,7 @@ const createUser = async function (req, res) {
     }
 
     //mandatory fields
-    if (!body.fname) {
+    if (!isValid(fname)) {
       {
         return res
           .status(400)
@@ -34,7 +36,7 @@ const createUser = async function (req, res) {
       }
     }
 
-    if (!body.lname) {
+    if (!isValid(lname)) {
       {
         return res
           .status(400)
@@ -42,7 +44,7 @@ const createUser = async function (req, res) {
       }
     }
 
-    if (!body.email) {
+    if (!isValid(email)) {
       {
         return res
           .status(400)
@@ -50,7 +52,7 @@ const createUser = async function (req, res) {
       }
     }
 
-    if (!body.phone) {
+    if (!isValid(phone)) {
       {
         return res
           .status(400)
@@ -58,7 +60,7 @@ const createUser = async function (req, res) {
       }
     }
 
-    if (!body.password) {
+    if (!isValid(password)) {
       {
         return res
           .status(400)
@@ -66,7 +68,7 @@ const createUser = async function (req, res) {
       }
     }
 
-    if (!body.address) {
+    if (!isValid(address)) {
       {
         return res
           .status(400)
@@ -74,9 +76,9 @@ const createUser = async function (req, res) {
       }
     }
 
-    if (body.address) {
-      const address = JSON.parse(body.address);
-      body.address = address;
+    if (address) {
+      const parsedAddress = JSON.parse(body.address);
+      address = parsedAddress;
       if (!address.shipping.street) {
         {
           return res
@@ -101,9 +103,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      let shippingPincode = isValidPincode.test(address.shipping.pincode);
-
-      if (!shippingPincode) {
+      if (!isValidPincode.test(address.shipping.pincode)) {
         return res
           .status(400)
           .send({ status: false, message: "Please provide a valid pincode " });
@@ -133,9 +133,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      let billingPincode = isValidPincode.test(address.billing.pincode);
-
-      if (!billingPincode) {
+      if (!isValidPincode.test(address.billing.pincode)) {
         return res
           .status(400)
           .send({ status: false, message: "Please provide a valid pincode " });
@@ -143,32 +141,26 @@ const createUser = async function (req, res) {
     }
 
     //format validation using regex
-    let fname = /^[a-zA-Z]{2,30}$/.test(body.name);
-    let lname = /^[a-zA-Z]{2,30}$/.test(body.name);
-    let emailId = isValidEmail.test(body.email);
-    let password = isValidPassword.test(body.password);
-    //valid indian phone number
-    let phone = isValidPhone.test(body.phone);
 
-    if (!fname) {
+    if (!alphabetOnlyRegex.test(fname)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid fname " });
     }
 
-    if (!lname) {
+    if (!alphabetOnlyRegex.test(lname)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid lname " });
     }
 
-    if (!emailId) {
+    if (!emailRegex.test(email)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid emailId " });
     }
 
-    if (!password) {
+    if (!passwordRegex.test(password)) {
       return res.status(400).send({
         status: false,
         message:
@@ -176,7 +168,7 @@ const createUser = async function (req, res) {
       });
     }
 
-    if (!phone) {
+    if (!phoneRegex.test(phone)) {
       return res.status(400).send({
         status: false,
         message: "Please provide a valid indian phone number ",
