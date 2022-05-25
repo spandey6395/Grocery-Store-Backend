@@ -18,7 +18,7 @@ const isValidFiles = function (files) {
   if (files && files.length > 0) return true;
 };
 
-const alphabetOnlyRegex = /^[a-zA-Z]{2,30}$/;
+const nameRegex = /^[a-zA-Z]{2,30}$/;
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
@@ -34,7 +34,7 @@ module.exports = {
   isValidObjectId,
   isValidRequestBody,
   isValidFiles,
-  alphabetOnlyRegex,
+  nameRegex,
   passwordRegex,
   phoneRegex,
   pincodeRegex,

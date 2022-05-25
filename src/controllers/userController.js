@@ -6,7 +6,7 @@ const {
   isValidObjectId,
   isValidRequestBody,
   isValidFiles,
-  alphabetOnlyRegex,
+  nameRegex,
   passwordRegex,
   phoneRegex,
   pincodeRegex,
@@ -103,7 +103,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      if (!isValidPincode.test(address.shipping.pincode)) {
+      if (!pincodeRegex.test(address.shipping.pincode)) {
         return res
           .status(400)
           .send({ status: false, message: "Please provide a valid pincode " });
@@ -133,7 +133,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      if (!isValidPincode.test(address.billing.pincode)) {
+      if (!pincodeRegex.test(address.billing.pincode)) {
         return res
           .status(400)
           .send({ status: false, message: "Please provide a valid pincode " });
@@ -142,13 +142,13 @@ const createUser = async function (req, res) {
 
     //format validation using regex
 
-    if (!alphabetOnlyRegex.test(fname)) {
+    if (!nameRegex.test(fname)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid fname " });
     }
 
-    if (!alphabetOnlyRegex.test(lname)) {
+    if (!nameRegex.test(lname)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid lname " });
@@ -262,7 +262,7 @@ const login = async function (req, res) {
 
     // regex validation for passwrd
 
-    if (!isValidPassword.test(password)) {
+    if (!passwordRegex.test(password)) {
       return res.status(400).send({
         status: false,
         message: `Password length should be A Valid Password And Length Should Be in between 8 to 15 `,
@@ -379,7 +379,7 @@ const updateUser = async function (req, res) {
     }
 
     if (password) {
-      if (!isValidPassword.test(password)) {
+      if (!passwordRegex.test(password)) {
         return res.status(400).send({
           status: false,
           message:
@@ -395,7 +395,7 @@ const updateUser = async function (req, res) {
       const shipping = address.shipping;
       if (shipping) {
         if (shipping.pincode) {
-          if (!isValidPincode.test(shipping.pincode)) {
+          if (!pincodeRegex.test(shipping.pincode)) {
             return res
               .status(400)
               .send({ status: false, message: "enter valid pincode" });
@@ -406,7 +406,7 @@ const updateUser = async function (req, res) {
       const billing = address.billing;
       if (billing) {
         if (billing.pincode) {
-          if (!isValidPincode.test(billing.pincode)) {
+          if (!pincodeRegex.test(billing.pincode)) {
             return res
               .status(400)
               .send({ status: false, message: "enter valid pincode" });
