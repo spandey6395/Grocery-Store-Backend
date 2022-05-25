@@ -206,8 +206,8 @@ const createUser = async function (req, res) {
     if (files && files.length > 0) {
       //upload to s3 and get the uploaded link
       // res.send the link back to frontend/postman
-      let uploadedFileURL = await uploadFile(files[0]); //upload file
-      body.profileImage = uploadedFileURL;
+      let uploadProfileImage = await uploadFile(files[0]); //upload file
+      body.profileImage = uploadProfileImage;
     } else {
       return res
         .status(400)
