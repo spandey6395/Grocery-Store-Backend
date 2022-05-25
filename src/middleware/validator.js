@@ -18,6 +18,19 @@ const isValidFiles = function (files) {
   if (files && files.length > 0) return true;
 };
 
+const isValidSize = function (size) {
+  const validSize = size.split(",").map(x => x.toUpperCase().trim())
+
+  let sizes = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+
+  for (let i = 0; i < validSize.length; i++) {
+    if (!sizes.includes(validSize[i])) {
+      return false
+    }
+  }
+  return validSize
+}
+
 const nameRegex = /^[a-zA-Z]{2,30}$/;
 
 const passwordRegex =
@@ -41,5 +54,6 @@ module.exports = {
   phoneRegex,
   pincodeRegex,
   emailRegex,
-  decimalNumRegex
+  decimalNumRegex,
+  isValidSize
 };
