@@ -247,7 +247,7 @@ const login = async function (req, res) {
     }
     // regex validation for email
 
-    if (!isValidEmail.test(email)) {
+    if (!emailRegex.test(email)) {
       return res.status(400).send({
         status: false,
         message: `${email} should be a valid email address`,
@@ -358,7 +358,31 @@ const updateUser = async function (req, res) {
     }
 
     const { fname, lname, email, phone, password } = data;
+
+    //format validation using regex
+    if (fname) {
+      if (!nameRegex.test(fname)) {
+        return res
+          .status(400)
+          .send({ status: false, message: "Please provide a valid fname " });
+      }
+    }
+
+    if (lname) {
+      if (!nameRegex.test(lname)) {
+        return res
+          .status(400)
+          .send({ status: false, message: "Please provide a valid lname " });
+      }
+    }
+
     if (email) {
+      if (!emailRegex.test(email)) {
+        return res
+          .status(400)
+          .send({ status: false, message: "Please provide a valid emailId " });
+      }
+
       const isEmailAlreadyExist = await userModel.findOne({ email: email });
 
       if (isEmailAlreadyExist) {
@@ -369,6 +393,13 @@ const updateUser = async function (req, res) {
     }
 
     if (phone) {
+      if (!phoneRegex.test(phone)) {
+        return res.status(400).send({
+          status: false,
+          message: "Please provide a valid indian phone number ",
+        });
+      }
+
       const isPhoneAlreadyExist = await userModel.findOne({ phone: phone });
 
       if (isPhoneAlreadyExist) {
