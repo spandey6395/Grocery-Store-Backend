@@ -107,25 +107,26 @@ const filterProduct = async function (req, res) {
             let filter = { isDeleted: false }
 
             if (name) {
-                filter["title"] = { $regex: name, $options: "i" }
+                filter.title = { $regex: name, $options: "i" }
             }
+
 
             if (priceGreaterThan) {
                 if (!decimalNumRegex.test(priceGreaterThan)) {
                     return res.status(400).send({ status: false, message: "price filter should be a vaid number" })
                 }
-                filter["price"] = { $gt: `${priceGreaterThan}` }
+                filter.price = { $gt: `${priceGreaterThan}` }
             }
             if (priceLessThan) {
                 if (!decimalNumRegex.test(priceLessThan)) {
                     return res.status(400).send({ status: false, message: "price filter should be a vaid number" })
                 }
-                filter["price"] = { $lt: `${priceLessThan}` }
+                filter.price = { $lt: `${priceLessThan}` }
             }
 
             if (availableSizes) {
                 if (Array.isArray(isValidSize(availableSizes))) {
-                    filter["availableSizes"] = { $in: isValidSize(availableSizes) }
+                    filter.availableSizes = { $in: isValidSize(availableSizes) }
                 } else {
                     return res.status(400).send({ status: false, message: `size should be one these only ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
                 }
@@ -159,7 +160,7 @@ const filterProduct = async function (req, res) {
             }
 
             if (priceGreaterThan || priceLessThan) {
-                const productList = await productModel.find({ $and: [filter] }).sort({ price: req.query.priceSort })
+                const productList = await productModel.find(filter).sort({ price: req.query.priceSort })
                 if (productList.length == 0) {
                     return res.status(400).send({ status: false, message: "No available products" })
                 }
