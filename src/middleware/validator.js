@@ -18,6 +18,9 @@ const isValidFiles = function (files) {
   if (files && files.length > 0) return true;
 };
 
+const validFileRegex = /^.+\.(?:(?:[dD][oO][cC][xX]?)|(?:[pP][dD][fF])|(?:[pP][nN][gG])|(?:[jJ][pP][gG]))$/
+
+
 const isValidSize = function (size) {
   const validSize = size.split(",").map(x => x.toUpperCase().trim())
 
@@ -42,7 +45,7 @@ const pincodeRegex = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/;
 
 const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
 
-const decimalNumRegex = /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/
+const decimalNumRegex = /^[+]?([0-9]+\.?[0-9]*|\.[0-9]+)$/
 
 module.exports = {
   isValid,
@@ -55,5 +58,6 @@ module.exports = {
   pincodeRegex,
   emailRegex,
   decimalNumRegex,
-  isValidSize
+  isValidSize,
+  validFileRegex
 };

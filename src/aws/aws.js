@@ -1,4 +1,5 @@
 const aws = require("aws-sdk");
+const { validFileRegex } = require("../middleware/validator");
 
 //-------------------aws-----------------------------------------
 
@@ -24,6 +25,10 @@ let uploadFile = (file) => {
       if (err) {
         return reject({ error: err.message });
       }
+      if (!validFileRegex.test(file.originalname)) {
+        return reject({ status: false, message: "Invalid file type - accepted file type are - png, jpg, doc, pdf" })
+      }
+
       console.log("file uploaded succesfully");
       return resolve(data.Location); //link generated
     });
