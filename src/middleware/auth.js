@@ -47,7 +47,8 @@ const authorization = async function (req, res, next) {
   try {
     const _id = req.params.userId;
 
-    if (_id) {
+    if (!_id) return res.status(400).send({ status: false, message: "userId is required" })
+
       //id format validation
       if (_id) {
         if (mongoose.Types.ObjectId.isValid(_id) == false) {
@@ -75,7 +76,7 @@ const authorization = async function (req, res, next) {
       console.log("authorization successful");
 
       next();
-    }
+    
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }

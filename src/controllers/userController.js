@@ -18,7 +18,7 @@ const createUser = async function (req, res) {
   try {
     //reading input
     let body = req.body;
-    const { fname, lname, phone, email, password, address } = body;
+    let { fname, lname, phone, email, password, address } = body;
 
     //empty request body
     if (!isValidRequestBody(body)) {
@@ -79,6 +79,7 @@ const createUser = async function (req, res) {
     if (address) {
       const parsedAddress = JSON.parse(body.address);
       address = parsedAddress;
+      body.address = address
       if (!address.shipping.street) {
         {
           return res
@@ -216,11 +217,7 @@ const createUser = async function (req, res) {
 
     //create body
     let userCreated = await userModel.create(body);
-    res.status(201).send({
-      status: true,
-      message: "User created successfully",
-      data: userCreated,
-    });
+    res.status(201).send({ status: true, message: "User created successfully", data: userCreated, });
   } catch (error) {
     res.status(500).send({
       status: false,
