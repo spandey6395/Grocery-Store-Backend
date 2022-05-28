@@ -7,7 +7,7 @@ const addToCart = async function (req, res) {
 
         const _id = req.params.userId
         const data = req.body
-        const { cartId, productId, quantity } = data
+        let { cartId, productId, quantity } = data
 
         if (!productId) {
             return res.status(400).send({ status: false, message: "Provide productId" })
@@ -18,7 +18,8 @@ const addToCart = async function (req, res) {
         }
 
         if (!quantity) {
-            return res.status(400).send({ status: false, message: "Quantity is required" })
+            quantity = 1
+            // return res.status(400).send({ status: false, message: "Quantity is required" })
         }
 
         if (!/^[0-9]+$/.test(quantity)) {
@@ -42,7 +43,7 @@ const addToCart = async function (req, res) {
                     userId: _id,
                     items: {
                         productId: productId,
-                        quantity: quantity
+                        quantity: quantity || 1
                     },
                     totalPrice: findProduct.price * quantity,
                     totalItems: 1
