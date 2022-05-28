@@ -20,9 +20,8 @@ router.delete("/products/:productId", deleteProduct)
 
 //feature 3 cart api's
 router.post("/users/:userId/cart", authentication, authorization, addToCart)
-router.put("/users/:userId/cart",  updateCart)
+router.put("/users/:userId/cart", authentication, authorization, updateCart)
 router.get("/users/:userId/cart", authentication, authorization, getCart)
 router.delete("/users/:userId/cart", authentication, authorization, deleteCart)
-
 
 module.exports = router;
