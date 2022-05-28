@@ -4,6 +4,8 @@ const { createUser, getUser, login, updateUser, } = require("../controllers/user
 const { productById, deleteProduct, createProduct, filterProduct, updateProduct } = require("../controllers/productController");
 const { addToCart, updateCart, getCart, deleteCart } = require("../controllers/cartController")
 const { authentication, authorization } = require("../middleware/auth");
+const { route } = require("express/lib/application");
+const { createOrder, updateOrder } = require("../controllers/orderController");
 
 //feature 1 user api's
 router.post("/register", createUser);
@@ -23,5 +25,9 @@ router.post("/users/:userId/cart", authentication, authorization, addToCart)
 router.put("/users/:userId/cart", authentication, authorization, updateCart)
 router.get("/users/:userId/cart", authentication, authorization, getCart)
 router.delete("/users/:userId/cart", authentication, authorization, deleteCart)
+
+//feature 4 cart api's
+router.post("/users/:userId/orders", createOrder)
+router.post("/users/:userId/orders", updateOrder)
 
 module.exports = router;

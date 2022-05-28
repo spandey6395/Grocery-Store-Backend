@@ -35,6 +35,7 @@ const addToCart = async function (req, res) {
             const findCart = await cartModel.findOne({ userId: _id })
 
             if (findCart) {
+                //doubt
                 return res.status(400).send({ status: false, message: `cart is already created - Use this cartId ${findCart._id}` })
             }
 
@@ -71,10 +72,10 @@ const addToCart = async function (req, res) {
             if (!findCart) {
                 const addToCart = {
                     userId: _id,
-                    items: [{
+                    items: {
                         productId: productId,
                         quantity: quantity
-                    }],
+                    },
                     totalPrice: findProduct.price * quantity,
                     totalItems: 1
                 }
@@ -109,29 +110,10 @@ const addToCart = async function (req, res) {
 
     } catch (error) {
         res.status(500).send({ status: false, Error: "Server not responding", message: error.message, });
-
     }
 }
 
-
-const getCart = async function (req, res) {
-
-    try {
-        let userId = req.params.userId
-
-        const findCart = await cartModel.findOne({ userId: userId })
-
-        if (!findCart) {
-            return res.status(400).send({ status: false, message: "User's cart doesn't exist" })
-        }
-
-        return res.status(200).send({ status: true, message: "Cart details", data: findCart })
-    }
-    catch (error) {
-        res.status(500).send({ status: false, Error: "Server not responding", message: error.message, });
-    }
-
-}
+//------------------------------update api-----------------------------------
 
 const updateCart = async function (req, res) {
     try {
@@ -192,6 +174,30 @@ const updateCart = async function (req, res) {
         res.status(500).send({ status: false, msg: "server error", message: error.message })
     }
 }
+
+//------------------------------get api-----------------------------------
+
+const getCart = async function (req, res) {
+
+    try {
+        let userId = req.params.userId
+
+        const findCart = await cartModel.findOne({ userId: userId })
+
+        if (!findCart) {
+            return res.status(400).send({ status: false, message: "User's cart doesn't exist" })
+        }
+
+        return res.status(200).send({ status: true, message: "Cart details", data: findCart })
+    }
+    catch (error) {
+        res.status(500).send({ status: false, Error: "Server not responding", message: error.message, });
+    }
+
+}
+
+//------------------------------delete api-----------------------------------
+
 
 const deleteCart = async function (req, res) {
 
