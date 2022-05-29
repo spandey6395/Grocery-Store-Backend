@@ -44,7 +44,7 @@ const addToCart = async function (req, res) {
                     userId: _id,
                     items: {
                         productId: productId,
-                        quantity: quantity || 1
+                        quantity: quantity
                     },
                     totalPrice: findProduct.price * quantity,
                     totalItems: 1
@@ -117,7 +117,7 @@ const addToCart = async function (req, res) {
 
 const updateCart = async function (req, res) {
     try {
-        const userId = req.params.userId
+        // const userId = req.params.userId
         const info = req.body
 
         //Extract body
@@ -127,8 +127,8 @@ const updateCart = async function (req, res) {
             return res.status(400).send({ status: false, message: "enter the valid cartId in body" })
         }
         const findCart = await cartModel.findOne({ _id: cartId })
-        if (!findCart) {
-            return res.send(400).send({ status: false, message: "No such cartId exist" })
+        if (!isValid(findCart)) {
+            return res.status(400).send({ status: false, message: "No such cartId exist" })
         }
 
         if (!isValidObjectId(productId)) {
