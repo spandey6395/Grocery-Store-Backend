@@ -21,7 +21,7 @@ const createProduct = async function (req, res) {
             return res.status(400).send({ status: false, message: "price is required" })
         }
         if (currencyId) {
-            if (currencyId != "INR") {
+            if (currencyId.toUpperCase() != "INR") {
                 return res.status(400).send({ status: false, message: `${currencyId} Invalid - it should be INR` })
             }
         }
@@ -237,7 +237,7 @@ const updateProduct = async (req, res) => {
         }
 
         if (currencyId) {
-            if (currencyId !== 'INR') {
+            if (currencyId.toUpperCase() !== 'INR') {
                 res.status(400).send({ status: false, message: 'Please provide currencyId in INR only' })
                 return
             }

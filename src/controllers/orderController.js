@@ -1,34 +1,52 @@
 const orderModel = require('../models/orderModel')
 const userModel = require("../models/userModel")
 const { isValidRequestBody, isValidObjectId, isValid } = require('../middleware/validator')
-
+const cartModel = require('../models/cartModel')
 
 const createOrder = async function (req, res) {
     try {
         let data = req.body
         let _id = req.params.userId
-        let { userId, items, totalPrice, totalitems, totalQuantity } = data
-
-
+        let { cartId, cancellable, status } = data
 
         if (!isValidRequestBody(data)) {
             return res.status(400).send({ status: false, message: "Order details required" })
         }
+        // if (!isValid(items)) {
+        //     return res.status(400).send({ status: false, message: "Items is required" })
+        // }
+        // if (items.lenght == 0) {
+        //     return res.status(400).send({ status: false, message: "Items filed must contain some values" })
+        // }
+        // if (!isValid(totalPrice)) {
+        //     return res.status(400).send({ status: false, message: "totalPrice is required" })
+        // }
+        // if (!isValid(totalitems)) {
+        //     return res.status(400).send({ status: false, message: "totalitems is required" })
+        // }
+        // if (!isValid(totalQuantity)) {
+        //     return res.status(400).send({ status: false, message: "totalQuantity is required" })
+        // }
 
-        if (!isValid(items)) {
-            return res.status(400).send({ status: false, message: "Items is required" })
+        if (!isValid(cartId)) {
+            return res.status(400).send({ status: false, message: "cartId is required" })
         }
-        if (items.lenght == 0) {
-            return res.status(400).send({ status: false, message: "Items filed must contain some values" })
+        const cart = await cartModel.findById({ _id: cartId })
+        if (!cart) {
+            return res.status(400).send({ status: false, message: "cartId does not exist" })
         }
-        if (!isValid(totalPrice)) {
-            return res.status(400).send({ status: false, message: "totalPrice is required" })
+
+        if (cancellable) {
+            if (!(cancellable == true || cancellable == false)) {
+                return res.status(400).send({ status: false, message: "cancellable must be either true or false" })
+            }
         }
-        if (!isValid(totalitems)) {
-            return res.status(400).send({ status: false, message: "totalitems is required" })
-        }
-        if (!isValid(totalQuantity)) {
-            return res.status(400).send({ status: false, message: "totalQuantity is required" })
+
+        if (status) {
+            if (!["pending", "completed", "canceled"].includes(status.trim())) {
+                return res.status(400).send({ status: false, message: `status must be one of these only ${["pending", " completed", " canceled"]}` })
+
+            }
         }
 
         const createOrder = await orderModel.create(data)

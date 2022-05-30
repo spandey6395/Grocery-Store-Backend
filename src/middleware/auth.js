@@ -18,9 +18,7 @@ const authentication = async function (req, res, next) {
     try {
       const decodedToken = jwt.verify(splitToken[1], "Group-48", {
         ignoreExpiration: true,
-      });
-      // console.log(decodedToken.exp * 1000);
-      // console.log(Date.now());
+      }); 
 
       if (Date.now() > decodedToken.exp * 1000) {
         return res

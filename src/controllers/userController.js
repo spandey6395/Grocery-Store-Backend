@@ -346,15 +346,16 @@ const updateUser = async function (req, res) {
         .send({ status: false, message: "Please provide input" });
     }
 
-    const files = req.files;
+    let { fname, lname, email, phone } = data;
 
+    //update profileImage
+    const files = req.files;
+    let profileImage;
     if (isValidFiles(files)) {
       const profilePicture = await uploadFile(files[0]);
 
-      data.profileImage = profilePicture;
+      profileImage = profilePicture;
     }
-
-    const { fname, lname, email, phone, password } = data;
 
     //format validation using regex
     if (fname) {
@@ -406,14 +407,15 @@ const updateUser = async function (req, res) {
       }
     }
 
-    if (password) {
-      if (!passwordRegex.test(password)) {
+    let password;
+    if (data.password) {
+      if (!passwordRegex.test(data.password)) {
         return res.status(400).send({
-          status: false,
-          message:
-            "Password length should be of minimum 8 and maximum 15 characters",
+          status: false, message: "Password length should be of minimum 8 and maximum 15 characters",
         });
       }
+
+      password = await bcrypt.hash(data.password, 10);
     }
 
     // let address = JSON.parse(JSON.stringify(data));
@@ -443,7 +445,8 @@ const updateUser = async function (req, res) {
       }
     }
 
-    const newData = { fname, lname, email, phone, password };
+    const newData = { fname, lname, email, phone, password, profileImage };
+    console.log(newData)
 
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: req.userId },

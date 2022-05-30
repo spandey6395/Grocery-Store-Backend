@@ -127,7 +127,7 @@ const updateCart = async function (req, res) {
             return res.status(400).send({ status: false, message: "enter the valid cartId in body" })
         }
         const findCart = await cartModel.findOne({ _id: cartId })
-        if (!isValid(findCart)) {
+        if (!findCart) {
             return res.status(400).send({ status: false, message: "No such cartId exist" })
         }
 
@@ -136,7 +136,7 @@ const updateCart = async function (req, res) {
         }
         const findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!findProduct) {
-            return res.send(400).send({ status: false, message: `No such Product exist with this ${productId} Product id ` })
+            return res.status(400).send({ status: false, message: `No such Product exist with this ${productId} Product id ` })
         }
 
         if (!isValid(removeProduct)) return res.status(400).send({ status: false, message: "removeProduct is required" })
@@ -212,7 +212,7 @@ const deleteCart = async function (req, res) {
 
         const deletedCart = await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 }, { new: true })
 
-        return res.status(200).send({ status: false, message: "Cart items deleted successfully", data: deletedCart })
+        return res.status(204).send({ status: false, message: "Cart items deleted successfully", data: deletedCart })
 
     }
 
