@@ -29,7 +29,6 @@ const createOrder = async function (req, res) {
         if (status) {
             if (!["pending", "completed", "canceled"].includes(status.trim())) {
                 return res.status(400).send({ status: false, message: `status must be one of these only ${["pending", " completed", " canceled"]}` })
-
             }
         }
 
@@ -45,8 +44,6 @@ const createOrder = async function (req, res) {
             totalItems: cart.totalItems,
             totalQuantity: tQ
         }
-        console.log(order)
-        console.log(order.totalQuantity)
 
         const createOrder = await orderModel.create(order)
         return res.status(201).send({ status: false, message: "Order created successfully", data: createOrder })

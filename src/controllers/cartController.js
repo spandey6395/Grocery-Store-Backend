@@ -19,7 +19,6 @@ const addToCart = async function (req, res) {
 
         if (!quantity) {
             quantity = 1
-            // return res.status(400).send({ status: false, message: "Quantity is required" })
         }
 
         if (!/^[0-9]+$/.test(quantity)) {
