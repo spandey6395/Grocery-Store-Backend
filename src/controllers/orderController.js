@@ -1,5 +1,4 @@
 const orderModel = require('../models/orderModel')
-const userModel = require("../models/userModel")
 const { isValidRequestBody, isValidObjectId, isValid } = require('../middleware/validator')
 const cartModel = require('../models/cartModel')
 
