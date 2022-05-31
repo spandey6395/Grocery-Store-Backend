@@ -23,6 +23,8 @@ const validFileRegex = /^.+\.(?:(?:[dD][oO][cC][xX]?)|(?:[pP][dD][fF])|(?:[pP][n
 
 const isValidSize = function (size) {
   const validSize = size.split(",").map(x => x.toUpperCase().trim())
+  let uniqueValidSize = validSize.filter((item,
+    index) => validSize.indexOf(item) === index);
 
   let sizes = ["S", "XS", "M", "X", "L", "XXL", "XL"]
 
@@ -31,7 +33,7 @@ const isValidSize = function (size) {
       return false
     }
   }
-  return validSize
+  return uniqueValidSize
 }
 
 const nameRegex = /^[a-zA-Z]{2,30}$/;

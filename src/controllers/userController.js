@@ -1,17 +1,8 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const {
-  isValid,
-  isValidObjectId,
-  isValidRequestBody,
-  isValidFiles,
-  nameRegex,
-  passwordRegex,
-  phoneRegex,
-  pincodeRegex,
-  emailRegex,
-} = require("../middleware/validator");
+const { isValid, isValidObjectId, isValidRequestBody, isValidFiles, nameRegex, passwordRegex,
+  phoneRegex, pincodeRegex, emailRegex, } = require("../middleware/validator");
 const { uploadFile } = require("../aws/aws");
 
 const createUser = async function (req, res) {
