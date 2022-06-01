@@ -20,6 +20,11 @@ const createOrder = async function (req, res) {
             return res.status(400).send({ status: false, message: "cartId does not exist" })
         }
 
+        if (_id != cart.userId) {
+            return res.status(400).send({ status: false, message: "cart does not belong to this user" })
+
+        }
+
         if (cancellable) {
             if (!(cancellable == true || cancellable == false)) {
                 return res.status(400).send({ status: false, message: "cancellable must be either true or false" })
@@ -94,7 +99,7 @@ const updateOrder = async function (req, res) {
         }
 
         const updateOrder = await orderModel.findOneAndUpdate({ _id: orderId }, { status: status }, { new: true })
-        return res.status(400).send({ status: false, message: `Order ${status} successfully`, data: updateOrder })
+        return res.status(200).send({ status: false, message: `Order status changed to ${status}`, data: updateOrder })
     } catch (error) {
         res.status(500).send({ status: false, Error: "Server not responding", message: error.message, });
 
