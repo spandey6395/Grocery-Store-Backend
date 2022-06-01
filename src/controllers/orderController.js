@@ -42,7 +42,9 @@ const createOrder = async function (req, res) {
             items: cart.items,
             totalPrice: cart.totalPrice,
             totalItems: cart.totalItems,
-            totalQuantity: tQ
+            totalQuantity: tQ,
+            cancellable: cancellable,
+            status: status
         }
 
         const createOrder = await orderModel.create(order)
@@ -77,15 +79,18 @@ const updateOrder = async function (req, res) {
         if (!(findOrder.userId == _id)) {
             return res.status(400).send({ status: false, message: "Order doesn't belongs to this user" })
         }
-        if (!(findOrder.cancellable == true)) {
-            return res.status(400).send({ status: false, message: "This Order can not be cancelled" })
+        if (!isValid(status)) {
+            return res.status(400).send({ status: false, message: "status is required" })
         }
 
         if (status) {
             if (!["pending", "completed", "canceled"].includes(status.trim())) {
                 return res.status(400).send({ status: false, message: `status must be one of these only ${["pending", " completed", " canceled"]}` })
-
             }
+        }
+
+        if (findOrder.cancellable == false && status == "canceled") {
+            return res.status(400).send({ status: false, message: "This Order can not be cancelled" })
         }
 
         const updateOrder = await orderModel.findOneAndUpdate({ _id: orderId }, { status: status }, { new: true })
