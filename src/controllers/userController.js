@@ -260,7 +260,7 @@ const login = async function (req, res) {
     let user = await userModel.findOne({ email: email });
     if (!user) {
       return res
-        .status(400)
+        .status(401)
         .send({ status: false, msg: "Invalid credentials" });
     }
     const passwordDetails = await bcrypt.compare(body.password, user.password);

@@ -142,7 +142,7 @@ const filterProduct = async function (req, res) {
             if (!priceGreaterThan && !priceLessThan) {
                 const productList = await productModel.find(filter).sort({ price: req.query.priceSort })
                 if (productList.length == 0) {
-                    return res.status(400).send({ status: false, message: "No available products" })
+                    return res.status(404).send({ status: false, message: "No available products" })
                 }
                 return res.status(200).send({ status: true, message: "Products list", data: productList })
             }
@@ -154,7 +154,7 @@ const filterProduct = async function (req, res) {
                     }]
                 }).sort({ price: req.query.priceSort })
                 if (productList.length == 0) {
-                    return res.status(400).send({ status: false, message: "No available products" })
+                    return res.status(404).send({ status: false, message: "No available products" })
                 }
                 return res.status(200).send({ status: true, message: "Products list", data: productList })
             }
@@ -162,7 +162,7 @@ const filterProduct = async function (req, res) {
             if (priceGreaterThan || priceLessThan) {
                 const productList = await productModel.find(filter).sort({ price: req.query.priceSort })
                 if (productList.length == 0) {
-                    return res.status(400).send({ status: false, message: "No available products" })
+                    return res.status(404).send({ status: false, message: "No available products" })
                 }
                 return res.status(200).send({ status: true, message: "Products list", data: productList })
             }

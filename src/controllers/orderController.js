@@ -15,9 +15,15 @@ const createOrder = async function (req, res) {
         if (!isValid(cartId)) {
             return res.status(400).send({ status: false, message: "cartId is required" })
         }
+
+        if (!isValidObjectId(cartId)) {
+            return res.status(400).send({ status: false, message: "Invalid cartId" })
+
+        }
+
         const cart = await cartModel.findById({ _id: cartId })
         if (!cart) {
-            return res.status(400).send({ status: false, message: "cartId does not exist" })
+            return res.status(404).send({ status: false, message: "cartId does not exist" })
         }
 
         if (_id != cart.userId) {
@@ -79,7 +85,7 @@ const updateOrder = async function (req, res) {
         const findOrder = await orderModel.findOne({ _id: orderId, isDeleted: false })
 
         if (!findOrder) {
-            return res.status(400).send({ status: false, message: "Order not found" })
+            return res.status(404).send({ status: false, message: "Order not found" })
         }
         if (!(findOrder.userId == _id)) {
             return res.status(400).send({ status: false, message: "Order doesn't belongs to this user" })
