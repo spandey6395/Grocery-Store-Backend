@@ -63,11 +63,29 @@ const addToCart = async function (req, res) {
             if (findRealCart) {
                 if (findRealCart._id != cartId) {
                     return res.status(400).send({ status: false, message: `Incorrect CartId use this ${findRealCart._id}` })
+                } else {
+                    //increase quantity
+                    for (let i = 0; i < findCart.items.length; i++) {
+
+                        if (`${findCart.items[i].productId}` == `${findProduct._id}`) {
+                            findCart.items[i].quantity = findCart.items[i].quantity + quantity
+                            findCart.totalPrice = (findProduct.price * quantity) + findCart.totalPrice
+                            findCart.totalItems = findCart.items.length
+                            findCart.save()
+                            return res.status(200).send({ status: true, message: "product added to cart", data: findCart })
+                        }
+                    }
+
+                    //add new item in cart
+                    findCart.items[(findCart.items.length)] = { productId: productId, quantity: quantity }
+                    findCart.totalPrice = (findProduct.price * quantity) + findCart.totalPrice
+                    findCart.totalItems = findCart.items.length
+                    findCart.save()
+                    return res.status(200).send({ status: true, message: "product added to cart", data: findCart })
                 }
             }
 
-            const findCart = await cartModel.findOne({ _id: cartId })
-            if (!findCart) {
+            if (!findRealCart) {
                 const addToCart = {
                     userId: _id,
                     items: {
@@ -83,27 +101,6 @@ const addToCart = async function (req, res) {
                 return res.status(201).send({ status: true, message: "cart created and product added to cart successfully", data: cart })
             }
 
-            if (findCart) {
-
-                //increase quantity
-                for (let i = 0; i < findCart.items.length; i++) {
-
-                    if (`${findCart.items[i].productId}` == `${findProduct._id}`) {
-                        findCart.items[i].quantity = findCart.items[i].quantity + quantity
-                        findCart.totalPrice = (findProduct.price * quantity) + findCart.totalPrice
-                        findCart.totalItems = findCart.items.length
-                        findCart.save()
-                        return res.status(200).send({ status: true, message: "product added to cart", data: findCart })
-                    }
-                }
-
-                //add new item in cart
-                findCart.items[(findCart.items.length)] = { productId: productId, quantity: quantity }
-                findCart.totalPrice = (findProduct.price * quantity) + findCart.totalPrice
-                findCart.totalItems = findCart.items.length
-                findCart.save()
-                return res.status(200).send({ status: true, message: "product added to cart", data: findCart })
-            }
         }
 
     } catch (error) {
