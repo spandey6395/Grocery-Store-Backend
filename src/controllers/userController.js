@@ -103,7 +103,7 @@ const createUser = async function (req, res) {
           .status(400)
           .send({ status: false, message: "Please provide a valid pincode " });
       }
-      console.log(address)
+
       if (!isValid(address.billing)) {
         return res.status(400).send({ status: false, message: "Billing address is required" })
       }

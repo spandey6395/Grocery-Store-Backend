@@ -35,7 +35,6 @@ const authentication = async function (req, res, next) {
     }
     console.log("authentication successful");
     next();
-    // });
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }

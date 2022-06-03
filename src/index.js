@@ -5,12 +5,10 @@ const bodyParser = require("body-parser");
 const route = require("./route/route"); //imported route
 const mongoose = require("mongoose"); //ODM library for mongoDB
 const app = express(); //Assign express in app variable
-const multer = require("multer");
-const { AppConfig } = require("aws-sdk");
+const multer = require("multer");//multi-form data
 
 app.use(bodyParser.json()); //transforms the text-based JSON input into JS-accessible variables
-app.use(bodyParser.urlencoded({ extended: true }));
-//extended: true precises that the req.body object will contain values of any type instead of just strings.
+
 app.use(multer().any());
 
 //a framework that helps to establish a connection b/w node and mongoDB
