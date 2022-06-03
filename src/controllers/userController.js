@@ -71,7 +71,10 @@ const createUser = async function (req, res) {
       const parsedAddress = JSON.parse(body.address);
       address = parsedAddress;
       body.address = address
-      if (!address.shipping.street) {
+      if (!isValid(address.shipping)) {
+        return res.status(400).send({ status: false, message: "Shipping address is required" })
+      }
+      if (!isValid(address.shipping.street)) {
         {
           return res
             .status(400)
@@ -79,7 +82,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      if (!address.shipping.city) {
+      if (!isValid(address.shipping.city)) {
         {
           return res
             .status(400)
@@ -87,7 +90,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      if (!address.shipping.pincode) {
+      if (!isValid(address.shipping.pincode)) {
         {
           return res
             .status(400)
@@ -100,8 +103,11 @@ const createUser = async function (req, res) {
           .status(400)
           .send({ status: false, message: "Please provide a valid pincode " });
       }
-
-      if (!address.billing.street) {
+      console.log(address)
+      if (!isValid(address.billing)) {
+        return res.status(400).send({ status: false, message: "Billing address is required" })
+      }
+      if (!isValid(address.billing.street)) {
         {
           return res
             .status(400)
@@ -109,7 +115,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      if (!address.billing.city) {
+      if (!isValid(address.billing.city)) {
         {
           return res
             .status(400)
@@ -117,7 +123,7 @@ const createUser = async function (req, res) {
         }
       }
 
-      if (!address.billing.pincode) {
+      if (!isValid(address.billing.pincode)) {
         {
           return res
             .status(400)

@@ -108,7 +108,6 @@ const updateOrder = async function (req, res) {
         return res.status(200).send({ status: false, message: `Order status changed to ${status}`, data: updateOrder })
     } catch (error) {
         res.status(500).send({ status: false, Error: "Server not responding", message: error.message, });
-
     }
 }
 

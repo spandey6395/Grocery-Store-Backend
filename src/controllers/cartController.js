@@ -34,7 +34,6 @@ const addToCart = async function (req, res) {
             const findCart = await cartModel.findOne({ userId: _id })
 
             if (findCart) {
-                //doubt
                 return res.status(400).send({ status: false, message: `cart is already created - Use this cartId ${findCart._id}` })
             }
 
@@ -146,7 +145,7 @@ const updateCart = async function (req, res) {
 
         for (let i = 0; i < findCart.items.length; i++) {
 
-            if (`${findCart.items[i].productId}` == `${findProduct._id}`) {
+            if (findCart.items[i].productId.toString() == findProduct._id.toString()) {
 
                 //reduce quantity by one
                 if (removeProduct == 1 && findCart.items[i].quantity > 1) {
